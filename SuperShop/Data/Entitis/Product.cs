@@ -20,19 +20,22 @@ namespace SuperShop.Data.Entitis
 
 
         [Display(Name = "Last Purchase")]
-        public DateTime? LastPurchase {  get; set; }
+        public DateTime? LastPurchase { get; set; }
 
 
 
         [Display(Name = "Last Sale")]
-        public DateTime? LastSale{  get; set; }
+        public DateTime? LastSale { get; set; }
 
         [Display(Name = "Is Available")]
         public bool IsAvailable { get; set; }
 
 
         [DisplayFormat(DataFormatString = "{0:N2}", ApplyFormatInEditMode = false)]
-        public double Stock {  get; set; }
+        public double Stock { get; set; }
+
+
+        public User User { get; set; }
 
     }
 }

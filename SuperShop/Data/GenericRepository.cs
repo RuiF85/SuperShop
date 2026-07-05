@@ -19,6 +19,8 @@ namespace SuperShop.Data
             return _context.Set<T>().AsNoTracking();
 
         }
+
+       
         public async Task<T> GetByIdAsync(int id)
         {
             return await _context.Set<T>()
