@@ -1,13 +1,11 @@
-using System;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SuperShop.Data;
-using SuperShop.Data.Entitis;
 using SuperShop.Helpers;
 using SuperShop.Models;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace SuperShop.Controllers
 {
@@ -15,12 +13,18 @@ namespace SuperShop.Controllers
     {
         private readonly IProductRepository _productRepository;
         private readonly IUserHelper _userHelper;
+        private readonly IBlobHelper _blobHelper;
+        private readonly IConverterHelper _converterHelper;
 
-        public ProductsController( IProductRepository productRepository,
-                                   IUserHelper userHelper )                      
+        public ProductsController(IProductRepository productRepository,
+                                   IUserHelper userHelper,
+                                   IBlobHelper blodHelper,
+                                   IConverterHelper converterHelper)
         {
             _productRepository = productRepository;
             _userHelper = userHelper;
+            _blobHelper = blodHelper;
+            _converterHelper = converterHelper;
         }
 
         // GET: Products
@@ -37,8 +41,8 @@ namespace SuperShop.Controllers
                 return NotFound();
             }
 
-            var product =await _productRepository.GetByIdAsync(id.Value);
-        
+            var product = await _productRepository.GetByIdAsync(id.Value);
+
 
             if (product == null)
             {
@@ -59,55 +63,29 @@ namespace SuperShop.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(ProductViewModel model) 
+        public async Task<IActionResult> Create(ProductViewModel model)
         {
-            if (ModelState.IsValid) 
+            if (ModelState.IsValid)
             {
-                var path = string.Empty;
+                Guid imageId = Guid.Empty;
 
-                if(model.ImageFile != null && model.ImageFile.Length > 0)   
+                if (model.ImageFile != null && model.ImageFile.Length > 0)
                 {
-                    var guid = Guid.NewGuid().ToString();
-                    var file = $"{guid}.jpg";
 
-
-                    path = Path.Combine(Directory.GetCurrentDirectory(),
-                        "wwwroot\\images\\products",
-                        file);
-
-                    using(var stream = new FileStream(path, FileMode.Create)) 
-                    {
-                        await model.ImageFile.CopyToAsync(stream);
-                    }
-                    path = $"~/images/products/{file}";
+                    imageId = await _blobHelper.UploadBlobAsync(model.ImageFile, "products");
                 }
 
-                var product = this.ToProduct(model, path);
+
+                var product = _converterHelper.ToProduct(model, imageId, true);
 
                 //TODO: Modificar para o user que tiver logado
                 product.User = await _userHelper.GetUserByEmailAsync("ruiFernandes@gmail.com");
-
                 await _productRepository.CreateAsync(product);
                 return RedirectToAction(nameof(Index));
             }
             return View(model);
         }
 
-        private Product ToProduct(ProductViewModel model, string path)
-        {
-            return new Product
-            {
-                Id = model.Id,
-                ImageUrl = path,
-                IsAvailable = model.IsAvailable,
-                LastPurchase = model.LastPurchase,
-                LastSale = model.LastSale,
-                Name = model.Name,
-                Price = model.Price,
-                Stock = model.Stock,
-                User = model.User,
-            };
-        }
 
         // GET: Products/Edit/5
         public async Task<IActionResult> Edit(int? id)
@@ -123,26 +101,10 @@ namespace SuperShop.Controllers
                 return NotFound();
             }
 
-            var model = this.ToProductViewModel(product);
-
+            var model = _converterHelper.ToProductViewModel(product);
             return View(model);
         }
 
-        private ProductViewModel ToProductViewModel(Product product)
-        {
-            return new ProductViewModel
-            {
-                Id = product.Id,
-                ImageUrl = product.ImageUrl,
-                IsAvailable = product.IsAvailable,
-                LastPurchase = product.LastPurchase,
-                LastSale = product.LastSale,
-                Name = product.Name,
-                Price = product.Price,
-                Stock = product.Stock,
-                User = product.User,
-            };
-        }
 
 
         // POST: Products/Edit/5
@@ -156,26 +118,19 @@ namespace SuperShop.Controllers
             {
                 try
                 {
-                    var path = model.ImageUrl;
 
-                    if(model.ImageFile != null && model.ImageFile.Length > 0) 
+                    Guid imageId = model.ImageId;
+
+                    var path = model.ImageId;
+
+                    if (model.ImageFile != null && model.ImageFile.Length > 0)
                     {
-                        var guid = Guid.NewGuid().ToString();
-                        var file = $"{guid}.jpg";
 
-                        path = Path.Combine(Directory.GetCurrentDirectory(),
-                             "wwwroot\\images\\products",
-                            file);
-
-                        using(var stream = new FileStream(path, FileMode.Create))
-                        {
-                            await model.ImageFile.CopyToAsync(stream);
-                        }
-
-                        path = $"~/images/products/{file}";
+                        imageId = await _blobHelper.UploadBlobAsync(model.ImageFile, "products");
                     }
 
-                    var product = this.ToProduct(model, path);
+                    var product = _converterHelper.ToProduct(model, imageId, false);
+
 
                     //TODO: Modificar para o user que tiver logado
                     product.User = await _userHelper.GetUserByEmailAsync("ruiFernandes@gmail.com");
@@ -183,7 +138,7 @@ namespace SuperShop.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (! await _productRepository.ExistAsync(model.Id))
+                    if (!await _productRepository.ExistAsync(model.Id))
                     {
                         return NotFound();
                     }
@@ -198,7 +153,7 @@ namespace SuperShop.Controllers
         }
 
         // GET: Products/Delete/5
-        public async Task <IActionResult>Delete(int? id)
+        public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
             {
@@ -221,7 +176,7 @@ namespace SuperShop.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var product = await _productRepository.GetByIdAsync(id);
-             await _productRepository.DeleteAsync(product);
+            await _productRepository.DeleteAsync(product);
             return RedirectToAction(nameof(Index));
         }
 

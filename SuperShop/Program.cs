@@ -31,6 +31,5 @@ namespace SuperShop
                     webBuilder.UseStartup<Startup>();
                 });
 
-
     }
 }
