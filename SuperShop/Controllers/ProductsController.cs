@@ -16,14 +16,15 @@ namespace SuperShop.Controllers
         private readonly IBlobHelper _blobHelper;
         private readonly IConverterHelper _converterHelper;
 
-        public ProductsController(IProductRepository productRepository,
-                                   IUserHelper userHelper,
-                                   IBlobHelper blodHelper,
-                                   IConverterHelper converterHelper)
+        public ProductsController(
+            IProductRepository productRepository,
+            IUserHelper userHelper,
+            IBlobHelper blobHelper,
+            IConverterHelper converterHelper)
         {
             _productRepository = productRepository;
             _userHelper = userHelper;
-            _blobHelper = blodHelper;
+            _blobHelper = blobHelper;
             _converterHelper = converterHelper;
         }
 
@@ -43,7 +44,6 @@ namespace SuperShop.Controllers
 
             var product = await _productRepository.GetByIdAsync(id.Value);
 
-
             if (product == null)
             {
                 return NotFound();
@@ -59,8 +59,6 @@ namespace SuperShop.Controllers
         }
 
         // POST: Products/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(ProductViewModel model)
@@ -71,21 +69,27 @@ namespace SuperShop.Controllers
 
                 if (model.ImageFile != null && model.ImageFile.Length > 0)
                 {
-
-                    imageId = await _blobHelper.UploadBlobAsync(model.ImageFile, "products");
+                    imageId = await _blobHelper.UploadBlobAsync(
+                        model.ImageFile,
+                        "products");
                 }
 
+                var product = _converterHelper.ToProduct(
+                    model,
+                    imageId,
+                    true);
 
-                var product = _converterHelper.ToProduct(model, imageId, true);
+                // TODO: Modificar para o utilizador que estiver autenticado.
+                product.User = await _userHelper.GetUserByEmailAsync(
+                    "ruiFernandes@gmail.com");
 
-                //TODO: Modificar para o user que tiver logado
-                product.User = await _userHelper.GetUserByEmailAsync("ruiFernandes@gmail.com");
                 await _productRepository.CreateAsync(product);
+
                 return RedirectToAction(nameof(Index));
             }
+
             return View(model);
         }
-
 
         // GET: Products/Edit/5
         public async Task<IActionResult> Edit(int? id)
@@ -96,20 +100,18 @@ namespace SuperShop.Controllers
             }
 
             var product = await _productRepository.GetByIdAsync(id.Value);
+
             if (product == null)
             {
                 return NotFound();
             }
 
             var model = _converterHelper.ToProductViewModel(product);
+
             return View(model);
         }
 
-
-
         // POST: Products/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(ProductViewModel model)
@@ -118,22 +120,24 @@ namespace SuperShop.Controllers
             {
                 try
                 {
-
                     Guid imageId = model.ImageId;
-
-                    var path = model.ImageId;
 
                     if (model.ImageFile != null && model.ImageFile.Length > 0)
                     {
-
-                        imageId = await _blobHelper.UploadBlobAsync(model.ImageFile, "products");
+                        imageId = await _blobHelper.UploadBlobAsync(
+                            model.ImageFile,
+                            "products");
                     }
 
-                    var product = _converterHelper.ToProduct(model, imageId, false);
+                    var product = _converterHelper.ToProduct(
+                        model,
+                        imageId,
+                        false);
 
+                    // TODO: Modificar para o utilizador que estiver autenticado.
+                    product.User = await _userHelper.GetUserByEmailAsync(
+                        "ruiFernandes@gmail.com");
 
-                    //TODO: Modificar para o user que tiver logado
-                    product.User = await _userHelper.GetUserByEmailAsync("ruiFernandes@gmail.com");
                     await _productRepository.UpdateAsync(product);
                 }
                 catch (DbUpdateConcurrencyException)
@@ -142,13 +146,13 @@ namespace SuperShop.Controllers
                     {
                         return NotFound();
                     }
-                    else
-                    {
-                        throw;
-                    }
+
+                    throw;
                 }
+
                 return RedirectToAction(nameof(Index));
             }
+
             return View(model);
         }
 
@@ -170,15 +174,22 @@ namespace SuperShop.Controllers
             return View(product);
         }
 
+
         // POST: Products/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var product = await _productRepository.GetByIdAsync(id);
+
+            if (product == null)
+            {
+                return NotFound();
+            }
+
             await _productRepository.DeleteAsync(product);
+
             return RedirectToAction(nameof(Index));
         }
-
     }
 }
