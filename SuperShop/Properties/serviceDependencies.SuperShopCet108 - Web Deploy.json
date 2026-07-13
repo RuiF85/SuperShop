@@ -1,28 +1,19 @@
 {
   "dependencies": {
     "mssql3": {
-      "ignored": "true",
-      "type": "mssql",
-      "connectionId": "ConnectionStrings:DataContext"
-    },
-    "mssql2": {
-      "ignored": "true",
-      "type": "mssql",
-      "connectionId": "ConnectionStrings:DatabaseConnection",
-      "dynamicId": null
-    },
-    "mssql1": {
-      "ignored": "true",
-      "type": "mssql",
-      "connectionId": "ConnectionStrings:DataContext1",
-      "dynamicId": null
-    },
-    "mssql5": {
-      "serviceConnectorResourceId": "/subscriptions/[parameters('subscriptionId')]/resourcegroups/[parameters('serviceConnectorResourceGroupName')]/providers/Microsoft.Web/sites/SuperShopCet108/providers/Microsoft.ServiceLinker/linkers/ConnectionStringsDefaultConnection_80D1F62859",
+      "serviceConnectorResourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('serviceConnectorResourceGroupName')]/providers/Microsoft.Web/sites/SuperShopCet108/providers/Microsoft.ServiceLinker/linkers/DatabaseConnection_154682BC83",
       "secretStore": "AzureAppSettings",
-      "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('resourceGroupName')]/providers/Microsoft.Sql/servers/ruifcet108/databases/free-sql-db-4951710",
+      "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('resourceGroupName')]/providers/Microsoft.Sql/servers/ruicet108/databases/supershopdb",
       "type": "mssql.azure",
-      "connectionId": "ConnectionStrings:DefaultConnection"
+      "connectionId": "DatabaseConnection"
+    },
+    "storage1": {
+      "serviceConnectorResourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('serviceConnectorResourceGroupName')]/providers/Microsoft.Web/sites/SuperShopCet108/providers/Microsoft.ServiceLinker/linkers/BlobConnectionString1_8851323DA7, /subscriptions/5e836130-e245-4e73-90b1-c1e5c6fcfb64/resourceGroups/SuperShopCet108/providers/Microsoft.Web/sites/SuperShopCet108/providers/Microsoft.ServiceLinker/linkers/BlobConnectionString1_30ABA766C3",
+      "secretStore": "AzureAppSettings",
+      "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('resourceGroupName')]/providers/Microsoft.Storage/storageAccounts/supershopcet108",
+      "type": "storage.azure",
+      "connectionId": "Blob:ConnectionString1",
+      "dynamicId": null
     }
   }
 }

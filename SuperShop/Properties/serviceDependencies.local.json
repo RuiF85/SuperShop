@@ -1,23 +1,21 @@
 {
   "dependencies": {
     "mssql1": {
+      "ignored": "true",
       "type": "mssql",
       "connectionId": "ConnectionStrings:DataContext1",
       "dynamicId": null
     },
     "mssql2": {
+      "ignored": "true",
       "type": "mssql",
       "connectionId": "ConnectionStrings:DatabaseConnection",
       "dynamicId": null
     },
-    "mssql3": {
-      "type": "mssql",
-      "connectionId": "DatabaseConnection"
-    },
     "storage1": {
+      "ignored": "true",
       "type": "storage",
-      "connectionId": "Blob:ConnectionString1",
-      "dynamicId": null
+      "connectionId": "Blob:ConnectionString"
     }
   }
 }
