@@ -83,9 +83,7 @@ namespace SuperShop.Controllers
                     imageId,
                     true);
 
-                // TODO: Modificar para o utilizador que estiver autenticado.
-                product.User = await _userHelper.GetUserByEmailAsync(
-                    "ruiFernandes@gmail.com");
+                product.User = await _userHelper.GetUserByEmailAsync(this.User.Identity.Name);
 
                 await _productRepository.CreateAsync(product);
 
@@ -129,9 +127,7 @@ namespace SuperShop.Controllers
 
                     if (model.ImageFile != null && model.ImageFile.Length > 0)
                     {
-                        imageId = await _blobHelper.UploadBlobAsync(
-                            model.ImageFile,
-                            "products");
+                        imageId = await _blobHelper.UploadBlobAsync(model.ImageFile, "products");
                     }
 
                     var product = _converterHelper.ToProduct(
@@ -139,9 +135,7 @@ namespace SuperShop.Controllers
                         imageId,
                         false);
 
-                    // TODO: Modificar para o utilizador que estiver autenticado.
-                    product.User = await _userHelper.GetUserByEmailAsync(
-                        "ruiFernandes@gmail.com");
+                    product.User = await _userHelper.GetUserByEmailAsync(this.User.Identity.Name);
 
                     await _productRepository.UpdateAsync(product);
                 }
@@ -162,6 +156,7 @@ namespace SuperShop.Controllers
         }
 
         // GET: Products/Delete/5
+        [Authorize]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
