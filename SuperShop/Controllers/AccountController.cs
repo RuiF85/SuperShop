@@ -113,7 +113,6 @@ namespace SuperShop.Controllers
                 model.FirstName = user.FirstName;
                 model.LastName = user.LastName;
             }
-
             return View(model);
         }
 
@@ -129,7 +128,6 @@ namespace SuperShop.Controllers
                 if (response.Succeeded)
                 {
                     ViewBag.UserMessage = "User updated!";
-
                 }
                 else
                 {
@@ -148,7 +146,6 @@ namespace SuperShop.Controllers
         [HttpPost]
         public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
         {
-
             if (ModelState.IsValid)
             {
                 var user = await _userHelper.GetUserByEmailAsync(this.User.Identity.Name);
