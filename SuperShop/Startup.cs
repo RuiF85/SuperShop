@@ -9,8 +9,6 @@ using SuperShop.Data;
 using SuperShop.Data.Entitis;
 using SuperShop.Helpers;
 
-
-
 namespace SuperShop
 {
     public class Startup
