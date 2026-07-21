@@ -74,6 +74,8 @@ namespace SuperShop.Controllers
                         UserName = model.Username
                     };
 
+                    //role custmer 
+
                     var result = await _userHelper.AddUserAsync(user, model.Password);
 
                     if (result != IdentityResult.Success)
