@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Microsoft.Identity.Client;
 using SuperShop.Models;
 using System.Diagnostics;
 
@@ -28,6 +29,12 @@ namespace SuperShop.Controllers
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
+
+        [Route("error/404")]
+        public IActionResult Error404()
+        {
+            return View();
         }
     }
 }
