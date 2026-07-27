@@ -17,7 +17,22 @@ namespace SuperShop.Data
             _userHeper = userHelper;
         }
 
-        public IUserHelper UserHelper { get; }
+
+        public async Task<IQueryable<OrderDetailTemp>> GetDetailsTempsAsync(string userName)
+        {
+           var user = await _userHeper.GetUserByEmailAsync(userName);
+            if (user == null)
+            {
+                return null;
+
+            }
+            return _context.OrderDetailTemp
+                .Include(p => p.Product)
+                .Where(o => o.User == user)
+                .OrderBy(o => o.Product.Name);
+
+
+        }
 
         public async Task<IQueryable<Order>> GetOrderAsync(string userName)
         {

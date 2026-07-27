@@ -1,5 +1,7 @@
-﻿using System.Linq;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
 using SuperShop.Data.Entitis;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace SuperShop.Data
 {
@@ -7,5 +9,7 @@ namespace SuperShop.Data
     {
 
         public IQueryable GetAllWithUsers();
+
+        IEnumerable<SelectListItem> GetComboProducts();
     }
 }
