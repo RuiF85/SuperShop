@@ -8,6 +8,6 @@ namespace SuperShop.Data.Entitis
 
         public string LastName { get; set; }
 
-
+        public string FullName => $"{FirstName} {LastName}" ;
     }
 }
