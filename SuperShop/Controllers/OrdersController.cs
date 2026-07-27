@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore.Migrations.Operations;
 using SuperShop.Data;
 using SuperShop.Models;
 using System.Threading.Tasks;
@@ -14,7 +13,7 @@ namespace SuperShop.Controllers
         private readonly IOrderRepository _orderRepository;
         private readonly IProductRepository _productRepository;
 
-        public OrdersController(IOrderRepository orderRepository,IProductRepository productRepository)
+        public OrdersController(IOrderRepository orderRepository, IProductRepository productRepository)
         {
             _orderRepository = orderRepository;
             _productRepository = productRepository;
@@ -31,7 +30,7 @@ namespace SuperShop.Controllers
         {
             var model = await _orderRepository.GetDetailsTempsAsync(this.User.Identity.Name);
 
-            return View(model); 
+            return View(model);
         }
 
         public IActionResult AddProduct()
@@ -41,6 +40,18 @@ namespace SuperShop.Controllers
                 Quantity = 1,
                 Products = _productRepository.GetComboProducts()
             };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddProduct(AddItemViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                await _orderRepository.AddItemToOrderAsync(model, this.User.Identity.Name);
+                return RedirectToAction("Create");
+            }
 
             return View(model);
         }

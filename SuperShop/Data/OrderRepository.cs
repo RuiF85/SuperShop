@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SuperShop.Data.Entitis;
 using SuperShop.Helpers;
+using SuperShop.Models;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -15,6 +17,44 @@ namespace SuperShop.Data
         {
             _context = context;
             _userHeper = userHelper;
+        }
+
+        public async Task AddItemToOrderAsync(AddItemViewModel model, string userName)
+        {
+           var user = await _userHeper.GetUserByEmailAsync(userName);
+            if (user == null)
+            {
+                return;
+            }
+
+            var product = await _context.Products.FindAsync(model.ProductId);
+            if (product == null)
+            {
+                return;
+            }
+
+            var orderDetailTemp = await _context.OrderDetailTemp
+                .Where(odt => odt.User == user && odt.Product == product)
+                .FirstOrDefaultAsync();
+
+            if (orderDetailTemp == null)
+            {
+                orderDetailTemp = new OrderDetailTemp
+                {
+                    Price = product.Price,
+                    Product = product,
+                    Quantity = model.Quantity,
+                    User = user,
+                };
+
+                _context.OrderDetailTemp.Add(orderDetailTemp);
+            }
+            else
+            {
+                orderDetailTemp.Quantity += model.Quantity;
+                _context.OrderDetailTemp.Update(orderDetailTemp);
+            }
+            await _context.SaveChangesAsync();
         }
 
 
@@ -58,6 +98,25 @@ namespace SuperShop.Data
                 .ThenInclude(p => p.Product)
                 .Where(o => o.User == user)
                 .OrderByDescending(o => o.OrderDate);
+        }
+
+        public async Task ModifyOrderDetailTempQuantityAsync(int id, double quantity)
+        {
+            var orderDetailTemp = await _context.OrderDetailTemp.FindAsync(id);
+            if (orderDetailTemp == null)
+            {
+                return;
+            }
+
+            orderDetailTemp.Quantity += quantity;
+            if (orderDetailTemp.Quantity > 0)
+            {
+
+                _context.OrderDetailTemp.Update(orderDetailTemp);
+                await _context.SaveChangesAsync();
+
+            }
+
         }
     }
 }
