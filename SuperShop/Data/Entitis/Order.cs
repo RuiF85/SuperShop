@@ -17,7 +17,7 @@ namespace SuperShop.Data.Entitis
         public DateTime OrderDate { get; set; }
 
         [Required]
-        [Display(Name ="Delivery date date")]
+        [Display(Name ="Delivery date")]
         [DisplayFormat(DataFormatString = "{0:yyyy/MM/dd hh:mm tt}", ApplyFormatInEditMode = false)]
         public DateTime DeliveryDate { get; set; }
 
@@ -25,19 +25,24 @@ namespace SuperShop.Data.Entitis
         [Required]
         public User User { get; set; }
 
-
+        [DisplayFormat(DataFormatString ="{0:N0}")]
         public IEnumerable<OrderDetail> Items { get; set; }
 
+        public int Lines => Items == null ? 0 : Items.Count();
 
-        [DisplayFormat(DataFormatString = "{0:N2]")]
+
+        [DisplayFormat(DataFormatString = "{0:N2}")]
         public double Quantity => Items == null ? 0 : Items.Sum(i => i.Quantity);
    
 
         
-        [DisplayFormat(DataFormatString = "{0:C2]")]
+        [DisplayFormat(DataFormatString = "{0:C2}")]
         public decimal Value => Items == null ? 0 : Items.Sum(i => i.Value);
-   
 
+
+        [Display(Name = "Order date")]
+        [DisplayFormat(DataFormatString = "{0:mm/dd/yyyy HH:mm}", ApplyFormatInEditMode = false)]
+        public DateTime? OrderDateLocal => this.OrderDate == null ? null : this.OrderDate.ToLocalTime();
 
 
     }
