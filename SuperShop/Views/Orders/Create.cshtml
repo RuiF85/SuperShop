@@ -7,7 +7,6 @@
 
 <h2>Create</h2>
 
-</p>
 
 <a asp-action="AddProduct" class="btn btn-success">Add Product</a>
 <a asp-action="ConfirmOrder" class="btn btn-primary" id="btnConfirm">Confirm Order</a>
@@ -111,20 +110,23 @@
                 $("#btnYesConfirm").click(function() {
                     window.location.href = "/Orders/ConfirmOrder";
                     return false; 
-                })  
+                });
 
-                $("a[id*=btnDeleteItem]").click(function() {
+                $("a[id*=btnDeleteItem]")).click(function() {
                     debugger;
                     id=$(this).parent()[0].id;
                     $("#deleteDialog").modal("show");
                     return false;
                 });
+
                  $("#btnNoDelete").click(function() {
                     $("#deleteDialog").modal("hide");
                     return false;
                 });
+
                  $("#btnYesDelete").click(function() {
                    window.location.href = "/Orders/DeleteItem/" + id;
+                   return false;
                 });
             })
        </script>

@@ -19,6 +19,5 @@ namespace SuperShop.Data.Entitis
 
         public decimal Value => Price * (decimal)Quantity;
 
-
     }
 }

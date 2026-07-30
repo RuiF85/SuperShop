@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace SuperShop.Data.Entitis
 {
@@ -17,7 +16,7 @@ namespace SuperShop.Data.Entitis
         public DateTime OrderDate { get; set; }
 
         [Required]
-        [Display(Name ="Delivery date")]
+        [Display(Name = "Delivery date")]
         [DisplayFormat(DataFormatString = "{0:yyyy/MM/dd hh:mm tt}", ApplyFormatInEditMode = false)]
         public DateTime DeliveryDate { get; set; }
 
@@ -25,7 +24,7 @@ namespace SuperShop.Data.Entitis
         [Required]
         public User User { get; set; }
 
-        [DisplayFormat(DataFormatString ="{0:N0}")]
+        [DisplayFormat(DataFormatString = "{0:N0}")]
         public IEnumerable<OrderDetail> Items { get; set; }
 
         public int Lines => Items == null ? 0 : Items.Count();
@@ -33,9 +32,9 @@ namespace SuperShop.Data.Entitis
 
         [DisplayFormat(DataFormatString = "{0:N2}")]
         public double Quantity => Items == null ? 0 : Items.Sum(i => i.Quantity);
-   
 
-        
+
+
         [DisplayFormat(DataFormatString = "{0:C2}")]
         public decimal Value => Items == null ? 0 : Items.Sum(i => i.Value);
 

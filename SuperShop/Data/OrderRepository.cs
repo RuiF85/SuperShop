@@ -129,7 +129,6 @@ namespace SuperShop.Data
             if (user == null)
             {
                 return null;
-
             }
 
 
@@ -161,12 +160,9 @@ namespace SuperShop.Data
             orderDetailTemp.Quantity += quantity;
             if (orderDetailTemp.Quantity > 0)
             {
-
                 _context.OrderDetailTemp.Update(orderDetailTemp);
                 await _context.SaveChangesAsync();
-
             }
-
         }
     }
 }
